@@ -40,7 +40,7 @@ public class LiveListener implements Listener {
         Player player = event.getEntity();
         player.getWorld().strikeLightningEffect(player.getLocation());
         for(Player onlinePlayer : Bukkit.getOnlinePlayers())
-            onlinePlayer.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
+            onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
 
         List<String> deathMessages = Main.getMessages().getMessagesList("DeathMessages");
         if (!deathMessages.isEmpty()) {
