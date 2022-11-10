@@ -5,6 +5,8 @@ import de.zorryno.teamlivesystem.util.teams.Team;
 import de.zorryno.zorrynosystems.playerhead.PlayerHeadAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,6 +39,8 @@ public class LiveListener implements Listener {
 
         Player player = event.getEntity();
         player.getWorld().strikeLightningEffect(player.getLocation());
+        for(Player onlinePlayer : Bukkit.getOnlinePlayers())
+            onlinePlayer.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
 
         List<String> deathMessages = Main.getMessages().getMessagesList("DeathMessages");
         if (!deathMessages.isEmpty()) {
