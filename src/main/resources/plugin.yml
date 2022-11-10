@@ -1,0 +1,12 @@
+name: TeamLiveSystem
+version: '${project.version}'
+main: de.zorryno.teamlivesystem.Main
+api-version: 1.19
+depend: ["ProtocolLib"]
+softdepend: ["PlaceholderAPI"]
+author: "zorryno"
+description: "Team System by zorryno"
+commands:
+  team:
+    description: "Command to Manage Teams"
+    usage: "/team"

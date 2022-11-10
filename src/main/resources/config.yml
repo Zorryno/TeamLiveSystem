@@ -1,0 +1,5 @@
+debugMode: false
+TeamStartLives: 2
+blackList:
+  - "Owner"
+  - "Admin"
