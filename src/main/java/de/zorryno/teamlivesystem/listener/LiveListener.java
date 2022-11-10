@@ -29,6 +29,24 @@ public class LiveListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        Team team = Team.getTeamFromPlayer(player.getUniqueId());
+
+        if(team == null || !team.getDeathPlayers().contains(player.getUniqueId())) {
+            player.getWorld().strikeLightningEffect(player.getLocation());
+            for(Player onlinePlayer : Bukkit.getOnlinePlayers())
+                onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
+
+            List<String> deathMessages = Main.getMessages().getMessagesList("DeathMessages");
+            if (!deathMessages.isEmpty()) {
+                int random = (int) (Math.random() * deathMessages.size());
+                String message = deathMessages.get(random).replace("%name%", event.getEntity().getName());
+                event.setDeathMessage(" ");
+
+                PlayerHeadAPI.broadcastPlayerHeadAsync(plugin, player, 8, message);
+            }
+        }
+
         if (!isLiveSystemActive()) {
             event.setKeepInventory(true);
             event.getDrops().clear();
@@ -37,21 +55,6 @@ public class LiveListener implements Listener {
             return;
         }
 
-        Player player = event.getEntity();
-        player.getWorld().strikeLightningEffect(player.getLocation());
-        for(Player onlinePlayer : Bukkit.getOnlinePlayers())
-            onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
-
-        List<String> deathMessages = Main.getMessages().getMessagesList("DeathMessages");
-        if (!deathMessages.isEmpty()) {
-            int random = (int) (Math.random() * deathMessages.size());
-            String message = deathMessages.get(random).replace("%name%", event.getEntity().getName());
-            event.setDeathMessage(" ");
-
-            PlayerHeadAPI.broadcastPlayerHeadAsync(plugin, player, 8, message);
-        }
-
-        Team team = Team.getTeamFromPlayer(player.getUniqueId());
         if (team == null)
             return;
 
