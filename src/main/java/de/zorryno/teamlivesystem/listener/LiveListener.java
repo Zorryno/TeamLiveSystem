@@ -2,6 +2,7 @@ package de.zorryno.teamlivesystem.listener;
 
 import de.zorryno.teamlivesystem.Main;
 import de.zorryno.teamlivesystem.util.teams.Team;
+import de.zorryno.zorrynosystems.playerhead.PlayerHeadAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
+
 
 public class LiveListener implements Listener {
     private Plugin plugin;
@@ -34,46 +36,48 @@ public class LiveListener implements Listener {
         }
 
         Player player = event.getEntity();
+        player.getWorld().strikeLightningEffect(player.getLocation());
+
+        List<String> deathMessages = Main.getMessages().getMessagesList("DeathMessages");
+        if (!deathMessages.isEmpty()) {
+            int random = (int) (Math.random() * deathMessages.size());
+            String message = deathMessages.get(random).replace("%name%", event.getEntity().getName());
+            event.setDeathMessage(" ");
+
+            PlayerHeadAPI.broadcastPlayerHeadAsync(plugin, player, 8, message);
+        }
 
         Team team = Team.getTeamFromPlayer(player.getUniqueId());
         if (team == null)
             return;
 
-        if(team.getDeathPlayers().contains(player.getUniqueId())) {
+        if (team.getDeathPlayers().contains(player.getUniqueId())) {
             team.removeDeathPlayer(player.getUniqueId());
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, ()-> holdPlayer(player), 10);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> holdPlayer(player), 10);
             event.setDeathMessage(null);
             return;
         }
 
 
-        if(team.getLives() >= 1) {
+        if (team.getLives() >= 1) {
             team.removeLives(1);
             return;
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, ()-> holdPlayer(player), 10);
-        player.getWorld().strikeLightningEffect(player.getLocation());
-
-        List<String> deathMessages = Main.getMessages().getMessagesList("DeathMessages");
-        if(!deathMessages.isEmpty()) {
-            int random = (int) (Math.random() * deathMessages.size());
-            String message = deathMessages.get(random).replace("%name%", event.getEntity().getName());
-            event.setDeathMessage(message);
-        }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> holdPlayer(player), 10);
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Team team = Team.getTeamFromPlayer(event.getPlayer().getUniqueId());
-        if(team == null) return;
+        if (team == null) return;
 
-        if(!team.getDeathPlayers().contains(event.getPlayer().getUniqueId())) return;
+        if (!team.getDeathPlayers().contains(event.getPlayer().getUniqueId())) return;
 
-        if(team.getLives() <= 0) return;
+        if (team.getLives() <= 0) return;
 
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, ()-> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             releasePlayer(event.getPlayer());
             team.removeLives(1);
         });

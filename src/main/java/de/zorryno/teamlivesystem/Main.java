@@ -78,7 +78,6 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new LiveListener(this), this);
         Bukkit.getPluginManager().registerEvents(new JoinLeaveListener(), this);
 
-
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::checkLiveRefill, 0, 20);
     }
 
