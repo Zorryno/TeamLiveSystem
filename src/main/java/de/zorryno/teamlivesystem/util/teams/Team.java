@@ -41,7 +41,7 @@ public class Team {
      * @see #Team(Plugin, UUID, String, String, String, List, List, List, List, int, List)
      */
     public Team(Plugin plugin, UUID owner, String name, String displayName, String prefix) {
-        this(plugin, owner, name, displayName, "§r[" + prefix + "§r] ", null, null, null, null, Main.getTeamStartLives(), null);
+        this(plugin, owner, name, displayName, prefix, null, null, null, null, Main.getTeamStartLives(), null);
     }
 
     /**
@@ -66,7 +66,7 @@ public class Team {
         team = getOrCreateTeam(name);
 
         team.setPrefix(ChatColor.translateAlternateColorCodes('&', prefix));
-        this.prefix = prefix.substring(1, prefix.length() - 1);
+        this.prefix = prefix;
         team.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
         this.plugin = plugin;
         this.owner = owner;

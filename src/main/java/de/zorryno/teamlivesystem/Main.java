@@ -18,8 +18,8 @@ import de.zorryno.teamlivesystem.placeholder.TeamNamePlaceholder;
 import de.zorryno.teamlivesystem.util.teams.Saver;
 import de.zorryno.teamlivesystem.util.teams.Team;
 import de.zorryno.zorrynosystems.config.Messages;
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
@@ -36,59 +36,6 @@ public final class Main extends JavaPlugin {
     private static boolean debugMode = false;
     private static int teamStartLives = 0;
     private static Location deathSpawn = null;
-
-    @Override
-    public void onLoad() {
-        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        protocolManager.addPacketListener(new PacketAdapter(
-                this,
-                ListenerPriority.NORMAL,
-                PacketType.Play.Server.LOGIN
-        ) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                event.getPacket().getBooleans().write(0, true);
-            }
-        });
-    }
-
-    @Override
-    public void onEnable() {
-        plugin = this;
-        debugMode = getConfig().getBoolean("debugMode", false);
-        if (debugMode)
-            getLogger().info(ChatColor.DARK_RED + "DebugMode Enabled");
-        teamStartLives = getConfig().getInt("TeamStartLives");
-        deathSpawn = getConfig().getLocation("DeathSpawn");
-
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new TeamLivePlaceholder().register();
-            new TeamNamePlaceholder().register();
-        }
-
-        saver = new Saver(this);
-        saver.load();
-        messages = new Messages("messages.yml", this);
-        saveDefaultConfig();
-        getCommand("team").setExecutor(new TeamCommand(this));
-        getCommand("team").setTabCompleter(new TeamTabCompleter(this));
-        Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
-        Bukkit.getPluginManager().registerEvents(new SetScoreboardListener(), this);
-        Bukkit.getPluginManager().registerEvents(new LockEngine(this), this);
-        Bukkit.getPluginManager().registerEvents(new LiveListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new JoinLeaveListener(), this);
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::checkLiveRefill, 0, 20);
-    }
-
-    @Override
-    public void onDisable() {
-        saver.save();
-        Team.unregisterAllTeams();
-        HandlerList.unregisterAll(this);
-        Bukkit.getScheduler().cancelTasks(this);
-        HandlerList.unregisterAll(this);
-    }
 
     public static Saver getSaver() {
         return saver;
@@ -125,6 +72,63 @@ public final class Main extends JavaPlugin {
 
         teamStartLives = plugin.getConfig().getInt("TeamStartLives");
         deathSpawn = plugin.getConfig().getLocation("DeathSpawn");
+        LiveListener.setHoldCommand(plugin.getConfig().getString("holdCommand"));
+        LiveListener.setReleaseCommand(plugin.getConfig().getString("releaseCommand"));
+    }
+
+    @Override
+    public void onLoad() {
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        protocolManager.addPacketListener(new PacketAdapter(
+                this,
+                ListenerPriority.NORMAL,
+                PacketType.Play.Server.LOGIN
+        ) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                event.getPacket().getBooleans().write(0, true);
+            }
+        });
+    }
+
+    @Override
+    public void onEnable() {
+        plugin = this;
+        debugMode = getConfig().getBoolean("debugMode", false);
+        if (debugMode)
+            getLogger().info(ChatColor.DARK_RED + "DebugMode Enabled");
+        teamStartLives = getConfig().getInt("TeamStartLives");
+        deathSpawn = getConfig().getLocation("DeathSpawn");
+        LiveListener.setHoldCommand(getConfig().getString("holdCommand"));
+        LiveListener.setReleaseCommand(getConfig().getString("releaseCommand"));
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new TeamLivePlaceholder().register();
+            new TeamNamePlaceholder().register();
+        }
+
+        saver = new Saver(this);
+        saver.load();
+        messages = new Messages("messages.yml", this);
+        saveDefaultConfig();
+        getCommand("team").setExecutor(new TeamCommand(this));
+        getCommand("team").setTabCompleter(new TeamTabCompleter(this));
+        Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
+        Bukkit.getPluginManager().registerEvents(new SetScoreboardListener(), this);
+        Bukkit.getPluginManager().registerEvents(new LockEngine(this), this);
+        Bukkit.getPluginManager().registerEvents(new LiveListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new JoinLeaveListener(), this);
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::checkLiveRefill, 0, 20);
+    }
+
+    @Override
+    public void onDisable() {
+        saver.save();
+        Team.unregisterAllTeams();
+        HandlerList.unregisterAll(this);
+        Bukkit.getScheduler().cancelTasks(this);
+        HandlerList.unregisterAll(this);
     }
 
     public void checkLiveRefill() {
@@ -139,7 +143,7 @@ public final class Main extends JavaPlugin {
             return;
 
         saver.getTeams().forEach(team -> {
-            if(debugMode)
+            if (debugMode)
                 getLogger().info("Adding Lives to Team " + team.getName());
             int maxLives = team.getMaxLives();
             for (int i = 0; i < team.getAddingLives(); i++) {

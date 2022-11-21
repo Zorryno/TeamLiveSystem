@@ -17,6 +17,6 @@ public class ChatListener implements Listener {
 
         event.setCancelled(true);
         for(Player player : Bukkit.getOnlinePlayers())
-            player.sendMessage(team.getPrefix() + event.getPlayer().getName() + ": " + event.getMessage());
+            player.sendMessage(team.getPrefix() + " " + event.getPlayer().getName() + ": " + event.getMessage());
     }
 }

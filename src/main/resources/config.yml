@@ -1,5 +1,7 @@
 debugMode: false
 TeamStartLives: 2
+holdCommand: "rg removemember -w world gravestop %player%"
+releaseCommand: "rg addmember -w world gravestop %player%"
 blackList:
   - "Owner"
   - "Admin"
