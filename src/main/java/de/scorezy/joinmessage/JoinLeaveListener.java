@@ -2,6 +2,7 @@ package de.scorezy.joinmessage;
 
 import de.zorryno.teamlivesystem.Main;
 import de.zorryno.teamlivesystem.util.teams.Team;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,8 @@ public class JoinLeaveListener implements Listener {
             message = message.replace("%name%", "§r" + team.getPrefix() + "§a" + player.getName());
         else
             message = message.replace("%name%", "§r" + "§a" + player.getName());
+
+        message = PlaceholderAPI.setPlaceholders(player, message);
         event.setJoinMessage(message);
     }
 
@@ -32,6 +35,7 @@ public class JoinLeaveListener implements Listener {
         else
             message = message.replace("%name%", "§r" + "§c" + player.getName());
 
+        message = PlaceholderAPI.setPlaceholders(player, message);
         event.setQuitMessage(message);
     }
 }
