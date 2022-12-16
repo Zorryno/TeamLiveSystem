@@ -465,7 +465,13 @@ public class Team {
      */
     public List<String> getMemberNames() {
         List<String> names = new ArrayList<>();
-        getMembers().forEach(uuid -> names.add(Bukkit.getOfflinePlayer(uuid).getName()));
+        getMembers().forEach(uuid -> {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if(offlinePlayer.getName() == null)
+                names.add(offlinePlayer.getUniqueId().toString());
+            else
+                names.add(offlinePlayer.getName());
+        });
         return names;
     }
 
@@ -540,9 +546,17 @@ public class Team {
             alliances += "\n";
         }
 
+        String deathNames = "";
+        for (UUID deathUUID : getDeathPlayers()) {
+            OfflinePlayer member = Bukkit.getOfflinePlayer(deathUUID);
+            deathNames += member.getName() != null ? member.getName() : member.getUniqueId();
+            deathNames += "\n";
+        }
+
         String finalMemberNames = memberNames;
         String finalAdminNames = adminNames;
         String finalAlliances = alliances;
+        String finalDeathNames = deathNames;
         OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(owner);
         String ownerName = offlineOwner.getName() != null ? offlineOwner.getName() : owner.toString();
         Main.getMessages().getMessagesList("TeamInfo").forEach((message) -> player.sendMessage(message.
@@ -553,7 +567,8 @@ public class Team {
                 replace("%admins%", finalAdminNames).
                 replace("%members%", finalMemberNames).
                 replace("%alliances%", finalAlliances).
-                replace("%lives%", getLives() + "/" + getMaxLives()))
+                replace("%lives%", getLives() + "/" + getMaxLives()).
+                replace("%deathPlayers%", finalDeathNames))
         );
     }
 

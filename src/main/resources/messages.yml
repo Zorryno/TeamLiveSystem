@@ -61,6 +61,9 @@ TeamInfo:
   - "%members%"
   - ""
   - "Leben: %lives%"
+  - ""
+  - "Tote Spieler"
+  - "%deathPlayers"
 TeamListHeader: "-- Team List --"
 HelpPage:
   - "-- Team Help --"

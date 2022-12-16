@@ -299,6 +299,33 @@ public class TeamCommand implements CommandExecutor {
                 player.sendMessage(targetTeam.getName() + " Lives: " + targetTeam.getLives());
             }
 
+            case "addlive" -> {
+                if (!player.isOp()) {
+                    player.sendMessage(Main.getMessages().getCache().get("NoPermission"));
+                    return true;
+                }
+                if (args.length != 3) {
+                    player.sendMessage("/Team addlive <team> <amount>");
+                    return true;
+                }
+                Team targetTeam = Team.getTeamByName(args[1]);
+                if (targetTeam == null) {
+                    player.sendMessage(Main.getMessages().getCache().get("TeamNotFound"));
+                    return true;
+                }
+
+                int lives = 0;
+                try {
+                    lives = Integer.parseInt(args[2]);
+                } catch (NumberFormatException exception) {
+                    player.sendMessage("§cInvalid number");
+                    break;
+                }
+
+                targetTeam.addLives(Math.max(0, lives));
+                player.sendMessage(targetTeam.getName() + " Lives: " + targetTeam.getLives());
+            }
+
             case "setdeathspawn" -> {
                 if (!player.isOp()) {
                     player.sendMessage(Main.getMessages().getCache().get("NoPermission"));

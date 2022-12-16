@@ -17,7 +17,7 @@ public class JoinLeaveListener implements Listener {
         Team team = Team.getTeamFromPlayer(player.getUniqueId());
         String message = Main.getMessages().getCache().get("JoinMessage");
         if (team != null)
-            message = message.replace("%name%", "§r" + team.getPrefix() + "§a" + player.getName());
+            message = message.replace("%name%", "§r" + team.getPrefix() + "§a " + player.getName());
         else
             message = message.replace("%name%", "§r" + "§a" + player.getName());
 
@@ -31,7 +31,7 @@ public class JoinLeaveListener implements Listener {
         Team team = Team.getTeamFromPlayer(player.getUniqueId());
         String message = Main.getMessages().getCache().get("LeaveMessage");
         if (team != null)
-            message = message.replace("%name%", "§r" + team.getPrefix() + "§c" + player.getName());
+            message = message.replace("%name%", "§r" + team.getPrefix() + "§c " + player.getName());
         else
             message = message.replace("%name%", "§r" + "§c" + player.getName());
 

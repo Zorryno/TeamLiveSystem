@@ -90,6 +90,7 @@ public class TeamTabCompleter implements TabCompleter {
                 commands.add("invite");
                 commands.add("setdeathspawn");
                 commands.add("setlive");
+                commands.add("addlive");
                 commands.add("livesystem");
                 commands.add("reload");
             }
@@ -101,6 +102,7 @@ public class TeamTabCompleter implements TabCompleter {
                 case "kick":
                 case "invite":
                 case "setlive":
+                case "addlive":
                     if (!player.isOp())
                         break;
                 case "info":
@@ -156,7 +158,7 @@ public class TeamTabCompleter implements TabCompleter {
             }
         }
 
-        StringUtil.copyPartialMatches(args[args.length - 1], commands, completions);
+        StringUtil.copyPartialMatches(args[args.length - 1] , commands, completions);
         Collections.sort(completions);
         return completions;
     }
